@@ -1,0 +1,11 @@
+{
+  "model_directory": "C:\\Users\\jakub\\Downloads\\VicunaModel",
+  "data_directory": ".\\static\\Data",
+  "local_model": true,
+  "max_response": 512,
+  "device": "cuda:0",
+  "load_8bit": true,
+  "embedding_model": false,
+  "default_port": "7777",
+  "loading_dir": "C:\\Users\\jakub\\PycharmProjects\\Querill\\static\\Data\\"
+}

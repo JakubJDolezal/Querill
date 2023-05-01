@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Completions</title>
+    <style>
+	body {
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		font-size: 14px;
+		margin: 0;
+		padding: 0;
+	}
+
+	h1 {
+		background-color: #00BFFF;
+		color: #fff;
+		margin: 0;
+		padding: 20px;
+		text-align: center;
+	}
+
+	#chat-box {
+		background-color: #f6f6f6;
+		border-radius: 10px;
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+		margin: 0 auto;
+		max-width: 600px;
+		padding: 20px;
+		overflow-y: scroll;
+		height: 400px;
+	}
+
+	.message {
+		border-radius: 10px;
+		margin-bottom: 10px;
+		padding: 10px;
+		max-width: 75%;
+		word-wrap: break-word;
+	}
+
+	.user {
+	  background-color: #8bc34a;
+	  align-self: flex-end;
+	  color: #fff;
+	  padding: 10px;
+	  border-radius: 10px;
+	  margin-bottom: 10px;
+	}
+
+	.bot {
+	  background-color: #fff;
+	  align-self: flex-start;
+	  color: #333;
+	  padding: 10px;
+	  border-radius: 10px;
+	  margin-bottom: 10px;
+	}
+
+	#input-form {
+		display: flex;
+		margin-top: 20px;
+	}
+
+	#input-field {
+		border: none;
+		border-radius: 20px;
+		font-size: 14px;
+		padding: 10px;
+		width: 100%;
+	}
+
+	#input-field:focus {
+		outline: none;
+	}
+
+	#input-field::placeholder {
+		color: #bbb;
+	}
+
+
+	#submit-button {
+		background-color: #4CAF50;
+		border-radius: 25px;
+		border: none;
+		color: white;
+		cursor: pointer;
+		font-size: 16px;
+		padding: 10px 20px;
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+	}
+
+	#submit-button:hover {
+		background-color: #3e8e41;
+	}
+
+@media (prefers-color-scheme: dark) {
+		  body {
+			background-color: #222;
+			color: #fff;
+		  }
+
+		  h1 {
+			background-color: #333;
+		  }
+
+		  #chat-box {
+			background-color: #444;
+			box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+		  }
+
+		  .user {
+			background-color: #8bc34a;
+			color: #fff;
+		  }
+
+		  .bot {
+			background-color: #fff;
+			color: #333;
+		  }
+
+		  .context {
+			background-color: #ffa726;
+			color: #333;
+		  }
+
+		  #input-field {
+			background-color: #333;
+			color: #fff;
+		  }
+
+		  #submit-button {
+			background-color: #4CAF50;
+			box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+		  }
+
+		  #submit-button:hover {
+			background-color: #3e8e41;
+		  }
+		}
+    </style>
+</head>
+<body>
+	<h1>Chat Completions</h1>
+	<div id="chat-box">
+		{% if messages %}
+		{% for message in messages %}
+		{% if message.role == 'user' %}
+		<div class="message user">
+			{{ message.content }}
+		</div>
+		{% else %}
+		<div class="message bot">
+			{{ message.content }}
+		</div>
+		{% endif %}
+		{% endfor %}
+		{% endif %}
+	</div>
+    <form id="input-form" method="post">
+        {% csrf_token %}
+        <input type="text" id="input-field" name="message" placeholder="Type a message...">
+        <button id="submit-button" type="submit">Send</button>
+    </form>
+    <script>
+        // Scroll to the bottom of the chat box
+        var chatBox = document.getElementById('chat-box');
+		var lastMessage = chatBox.lastElementChild;
+		var lastMessageY = lastMessage.offsetTop + lastMessage.offsetHeight;
+		chatBox.scrollTop = lastMessageY - chatBox.offsetHeight;
+
+        // Submit the form when the user hits enter
+        var inputField = document.getElementById('input-field');
+        inputField.addEventListener('keydown', function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById('input-form').submit();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,522 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chat Completions</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: space-between;
+            height: 100vh;
+            margin: 0;
+        }
+
+
+
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+        }
+          .pdf-container-hidden {
+            display: none;
+          }
+        h1 {
+            background-color: #00BFFF;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #chat-container, #pdf-container {
+            width: 50%;
+            height: 100%;
+            overflow: auto;
+            position: relative;
+        }
+        #chat-box {
+            background-color: #f6f6f6;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            padding: 20px;
+            overflow-y: scroll;
+            height: 80%;
+             width: 90%;
+
+        }
+
+        #chat-box {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .message {
+          border-radius: 10px;
+          margin-bottom: 10px;
+          padding: 10px;
+          word-wrap: break-word;
+          display: inline-block;
+          vertical-align: top;
+        }
+
+        .user {
+          background-color: #8bc34a;
+          color: #fff;
+          border-radius: 10px;
+          justify-self: flex-end;
+          align-self: flex-end;
+        }
+
+        .bot {
+          background-color: #fff;
+          color: #333;
+          border-radius: 10px;
+          justify-self: flex-start;
+            align-self: flex-start;
+        }
+        .context {
+          background-color: #ffa726;
+          color: #333;
+          padding: 10px;
+          border-radius: 10px;
+          margin-bottom: 10px;
+          display: inline-block;
+          text-align: center;
+          vertical-align: top;
+           align-self: center;
+        }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        .textLayer > div {
+           position: absolute;
+        }
+
+        #input-field {
+            flex-grow: 1;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px; /* Increased border-radius for roundish appearance */
+            font-size: 16px;
+            width: 80%; /* Set width to 80% for a longer input field */
+            margin-right: 5px; /* Add a right margin to separate it from the submit button */
+        }
+        #input-form {
+            display: flex;
+            margin-top: 20px;
+
+
+        select {
+            font-size: 16px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            appearance: none;
+            background-color: white;
+            margin-bottom: 15px;
+        }
+
+        #list-dropdown {
+            margin-left: 5px;
+        }
+
+        #input-field:focus {
+            outline: none;
+        }
+
+        #input-field::placeholder {
+            color: #bbb;
+        }
+
+        }
+        #submit-button {
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        #submit-button:hover {
+            background-color: #0056b3;
+        }
+
+		#pdf-viewer {
+            width: 100%;
+            height: 95%;
+        }
+		#close-pdf {
+        background-color: #f44336;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 10px;
+        padding: 5px 10px;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        }
+
+        #close-pdf:hover {
+            background-color: #d32f2f;
+        }
+
+        #editor-container {
+            width: 50%;
+            height: 90%;
+            margin: 0 auto;
+          }
+
+        #close-editor-button {
+            background-color: #f44336; /* red */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        #close-editor-button:hover {
+            background-color: #e31b0c; /* darker red */
+        }
+		@media (prefers-color-scheme: dark) {
+		  body {
+			background-color: #222;
+			color: #fff;
+		  }
+
+		  h1 {
+			background-color: #333;
+		  }
+
+		  #chat-box {
+			background-color: #444;
+			box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+		  }
+
+		  .user {
+			background-color: #8bc34a;
+			color: #fff;
+		  }
+
+		  .bot {
+			background-color: #fff;
+			color: #333;
+		  }
+
+		  .context {
+			background-color: #ffa726;
+			color: #333;
+		  }
+
+		  #input-field {
+			background-color: #333;
+			color: #fff;
+		  }
+
+		  #submit-button {
+			background-color: #4CAF50;
+			box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+		  }
+
+		  #submit-button:hover {
+			background-color: #3e8e41;
+		  }
+
+
+		}
+
+    </style>
+    <script src="{% static 'pdfjs/build/pdf.js' %}"></script>
+    <script src="{% static 'pdfjs/build/pdf.worker.js' %}"></script>
+<!--    <script src="{% static 'pdfjs/web/text_layer_builder.js' %}"></script>-->
+</head>
+<body>
+    <div id="chat-container">
+        <h1>Chat Completions</h1>
+        <div id="chat-box">
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.role == 'user' %}
+            <div class="message user">
+                {{ message.content }}
+            </div>
+            {% endif %}
+            {% if  message.role == 'bot'%}
+            <div class="message bot">
+                {{ message.content }}
+            </div>
+            {% endif %}
+            {% if  message.role == 'context'%}
+            <div class="message context">
+                {{ message.content }}
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </div>
+        <form id="input-form" method="post">
+            {% csrf_token %}
+            <input type="text" id="input-field" name="message" placeholder="Type a message...">
+            <button id="submit-button" type="submit">Send</button>
+        </form>
+
+        <select id="key-dropdown">
+        {% for key in dictionary_levels_values.keys %}
+            <option value="{{ key }}">{{ key }}</option>
+        {% endfor %}
+        </select>
+
+        <select id="list-dropdown">
+            <!-- The list dropdown will be populated using JavaScript -->
+        </select>
+    </div>
+
+
+    <div id="pdf-container" class="pdf-container-hidden">
+        <canvas id="pdf-viewer"></canvas>
+        <button id="prev">Previous</button>
+        <button id="next">Next</button>
+        <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+        <button id="close-pdf">Close</button> <!-- Close button added here -->
+    </div>
+
+<!--<script>console.log('{{ pdf }}')</script>-->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <div id="editor-container">
+        <div id="editor">
+        </div>
+        <!-- Add a close button -->
+        <button id="close-editor-button">Close Editor</button>
+    </div>
+<!-- Create the editor container -->
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+
+<!-- Convert Markdown to HTML -->
+<script>
+
+
+                        <!--The chat container-->
+
+
+let chatContainer = document.getElementById('chat-container');
+// Scroll to the bottom of the chat box
+var chatBox = document.getElementById('chat-box');
+var lastMessage = chatBox.lastElementChild;
+var lastMessageY = lastMessage.offsetTop + lastMessage.offsetHeight;
+chatBox.scrollTop = lastMessageY - chatBox.offsetHeight;
+
+// Submit the form when the user hits enter
+var inputField = document.getElementById('input-field');
+inputField.addEventListener('keydown', function(event) {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById('input-form').submit();
+    }
+});
+
+// Define a global variable to store the context state
+var isContextActive = false;
+// Get all context messages and add a click event listener to each one
+var contextMessages = document.querySelectorAll('.message.context');
+contextMessages.forEach(function (message) {
+    message.addEventListener('click', function () {
+        var contextText = message.textContent;
+        // Set the context state to true when a user clicks on a context message
+        isContextActive = true;
+    });
+});
+
+                        <!--The chat container-Selection Menus-->
+
+
+
+const keyDropdown = document.getElementById('key-dropdown');
+const listDropdown = document.getElementById('list-dropdown');
+const data = {{ dictionary_levels_values|safe }};
+
+function populateListDropdown() {
+    const selectedKey = keyDropdown.value;
+    const listItems = data[selectedKey];
+
+    listDropdown.innerHTML = '';
+
+    listItems.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item;
+        option.innerText = item;
+        listDropdown.appendChild(option);
+    });
+}
+
+keyDropdown.addEventListener('change', populateListDropdown);
+
+// Populate the list dropdown initially
+populateListDropdown();
+
+                            <!--Text Editor-->
+var txt_to_show='';
+if (txt_to_show!='')
+{
+  var quill = new Quill('#editor',
+  {
+    theme: 'snow'
+  });
+  quill.root.innerHTML = "<p><strong class=\"ql-size-large\"><em><s><u>This would be the text that we are going to show in the editor with pre-formatting.<\/u><\/s><\/em><\/strong><\/p>";
+
+
+  var closeButton = document.getElementById('close-editor-button');
+  // Add a click event listener to the close button
+  closeButton.addEventListener('click',function()
+  {
+  // Hide the editor container when the close button is clicked
+      document.getElementById('editor-container').style.display = 'none';
+      chatContainer.style.width = '100%';
+  } );
+
+}
+else
+{
+  document.getElementById('editor-container').style.display = 'none';
+  chatContainer.style.width = '100%';
+}
+
+                    <!--The pdf container-->
+
+
+const pdfContainer = document.getElementById('pdf-container');
+function showPdfViewer() {
+    pdfContainer.classList.remove('pdf-container-hidden');
+        chatContainer.style.width = '50%';
+}
+
+function hidePdfViewer() {
+    pdfContainer.classList.add('pdf-container-hidden');
+        chatContainer.style.width = '100%';
+}
+// Load the PDF file
+
+var pdfUrl = '/display_pdf/'+'{{pdf_to_show}}'
+var pdf_exists='{{pdf_to_show}}'
+
+if (pdf_exists!='')
+{
+// If absolute URL from the remote server is provided, configure the CORS
+// header on that server.
+    showPdfViewer();
+// Loaded via <script> tag, create shortcut to access PDF.js exports.
+    const pdfjsLib = window["pdfjs-dist/build/pdf"];
+
+// The workerSrc property shall be specified.
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "{% static 'pdf.worker.js' %}";
+
+    let pdfDoc = null,
+        pageNum = 1,
+        pageRendering = false,
+        pageNumPending = null,
+        scale = 3
+        canvas = document.getElementById("pdf-viewer"),
+        ctx = canvas.getContext("2d");
+
+    function renderPage(num) {
+        pageRendering = true;
+        pdfDoc.getPage(num).then(function (page) {
+            const availableWidth = window.innerWidth *1; // Adjust this value based on the desired space for the PDF
+            const originalWidth = page.getViewport({ scale: 1 }).width;
+            scale = availableWidth / originalWidth; // Calculate the scale based on the available width and the original PDF width
+
+            const viewport = page.getViewport({ scale: scale });
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            const renderContext = {
+                canvasContext: ctx,
+                viewport: viewport,
+            };
+            const renderTask = page.render(renderContext);
+
+            renderTask.promise.then(function () {
+                pageRendering = false;
+                if (pageNumPending !== null) {
+                    renderPage(pageNumPending);
+                    pageNumPending = null;
+                }
+            });
+        });
+
+        document.getElementById("page_num").textContent = num;
+    }
+
+
+    function queueRenderPage(num) {
+        if (pageRendering) {
+            pageNumPending = num;
+        } else {
+            renderPage(num);
+        }
+    }
+
+    function onPrevPage() {
+        if (pageNum <= 1) {
+            return;
+        }
+        pageNum--;
+        queueRenderPage(pageNum);
+    }
+    document.getElementById("prev").addEventListener("click", onPrevPage);
+
+    function onNextPage() {
+        if (pageNum >= pdfDoc.numPages) {
+            return;
+        }
+        console.log('there')
+        pageNum++;
+        queueRenderPage(pageNum);
+    }
+    document.getElementById("next").addEventListener("click", onNextPage);
+
+    pdfjsLib.getDocument(pdfUrl).promise.then(function (pdfDoc_) {
+        pdfDoc = pdfDoc_;
+        document.getElementById("page_count").textContent = pdfDoc.numPages;
+
+        renderPage(pageNum);
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("prev").addEventListener("click", onPrevPage);
+        document.getElementById("next").addEventListener("click", onNextPage);
+
+        const container = document.getElementById("pdf-viewer");
+        container.addEventListener("click", () => {
+            window.open(pdfUrl, "_blank");
+        });
+    });
+
+    function close_pdf() {
+        hidePdfViewer();
+        pdfUrl = ''; // Set pdfUrl to empty when close button is clicked
+    }
+    var closepdfButton = document.getElementById('close-pdf');
+    closepdfButton.addEventListener('click', close_pdf)
+}
+else{hidePdfViewer();}
+</script>
+</body>
+</html>
