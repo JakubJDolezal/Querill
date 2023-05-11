@@ -9,7 +9,8 @@ f = open('config.json')
 
 config = json.load(f)
 if config['embedding_model']:
-    VDB = VectorDatabase(encoder=config['embedding_model'], splitting_choice='length')
+    hidden_size=config['embedding_model_hidden_size']
+    VDB = VectorDatabase(encoder=config['embedding_model'], splitting_choice='length', hidden_size=hidden_size)
     VDB.load_all_in_directory(config['loading_dir'])
 else:
     VDB = VectorDatabase(splitting_choice='length')
@@ -37,7 +38,7 @@ def get_chat_completions_with_context(request):
         # Get the user input from the form
         message = request.POST.get('message')
         messages.append({'role': 'user', 'content': message})
-        prepending = "A chat between a curious user and an artificial intelligence assistant.The assistant gives helpful, detailed, and polite answers to the user's questions and tries to use the provided context to answer the user's questions. User:"
+        prepending = "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions and tries to use the provided context to answer the user's questions. User:"
         i1, i2 = VDB.get_context_indices_from_entire_database(message)
         context_small = VDB.list_of_lists_of_strings[i1][i2]
         Context = 'Context:' + context_small

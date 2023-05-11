@@ -7,5 +7,6 @@
   "load_8bit": true,
   "embedding_model": false,
   "default_port": "7777",
-  "loading_dir": "C:\\Users\\jakub\\PycharmProjects\\Querill\\static\\Data\\"
+  "loading_dir": "C:\\Users\\jakub\\PycharmProjects\\Querill\\static\\Data\\",
+  "embedding_model_hidden_size" : false
 }
