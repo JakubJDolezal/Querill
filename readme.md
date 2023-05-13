@@ -10,6 +10,7 @@ Before running the Querill Django server, make sure you have the following depen
     pip package manager
     Django
     VDBForGenAI
+    accelerate
 
 Installation
 
