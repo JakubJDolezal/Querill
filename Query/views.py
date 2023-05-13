@@ -5,8 +5,7 @@ import requests
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from transformers import LlamaForCausalLM, LlamaTokenizer, AutoConfig, AutoModelForCausalLM
-from accelerate import dispatch_model
-from accelerate import init_empty_weights
+from accelerate import dispatch_model, load_checkpoint_and_dispatch, init_empty_weights
 import json
 from Query.compression import compress_module
 import torch
@@ -21,7 +20,6 @@ if config['local_model']:
         with init_empty_weights():
             model = AutoModelForCausalLM.from_config(config_model)
         model.tie_weights()
-        from accelerate import load_checkpoint_and_dispatch
 
         model = load_checkpoint_and_dispatch(
             model, config['model_directory'], device_map="auto", no_split_module_classes=["LlamaDecoderLayer"]
